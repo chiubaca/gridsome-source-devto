@@ -6,13 +6,14 @@ class DevtoSource {
     return {
     }
   }
-  // api is the gridsome api - https://gridsome.org/docs/server-api/#apiloadsourcefn
-  // options are the params passed in my the user in gridsome.config.js
+
   constructor(api, options) {
     console.log("user options", options)
 
     api.loadSource(async ({ addCollection }) => {
-      // Use the Data Store API here: https://gridsome.org/docs/data-store-api/
+
+      // TODO : Fetch all articles smarter like this: 
+      // https://github.com/cevr/me/blob/5bcc358fe1d892b1d0936429eb832d62a686bc2d/src/lib/posts.ts#L104
       const devToArticles = await axios.get(
         'https://dev.to/api/articles/me/published?page=1&per_page=1000',
         {
@@ -35,7 +36,7 @@ class DevtoSource {
           bodyMarkdown: post.body_markdown,
           tags: post.tag_list
         })
-        console.log("Adding dev.to article", post.title)
+
       }
     })
   }
