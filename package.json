@@ -1,6 +1,6 @@
 {
   "name": "@chiubaca/gridsome-source-devto",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Dev.to source for Gridsome & some extra computed properties",
   "main": "index.js",
   "scripts": {
