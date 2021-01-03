@@ -47,69 +47,71 @@ class DevtoSource {
      * @param {number} page - pagination of dev.to getUserPublishedArticles endpoint.
      * @param {array} results - starts as empty array. We concat the results for the next run.
      */
-    async function fetchAllArticles(page = 1, results = []) {
-
+    async function fetchAllUserArticles(page = 1, results = []) {
       const resp = await fetchArticles(page)
 
       if (resp.status !== 200) {
         return Promise.reject(resp.statusText)
       }
-      // 
+
       if (resp.data.length === ARTICLES_PER_PAGE) {
+
         // small pause is required so we don't hit 429 error "Too many requests" issue.
         await sleep(100)
+
         // increment the page and fetch all articles again, whilst appending the results to the next call.
-        return fetchAllArticles(page + 1, results.concat(resp.data))
+        return fetchAllUserArticles(page + 1, results.concat(resp.data))
       }
+
       return results.concat(resp.data);
     }
 
+    /**
+     * Retrieves a single published article from dev.to via it's article Id
+     * https://docs.dev.to/api/index.html#operation/getArticleById
+     * @param {number} id - dev.to article ID 
+     */
     async function fetchArticleById(id) {
+      // small pause is required so we don't hit 429 error "Too many requests" issue.
       await sleep(100)
       const articles = await axios.get(
         `https://dev.to/api/articles/${id}`,
       )
       return articles
     }
-    
-  /**
-   * 
-   * @param {array} articleIds - an array of dev.to article ids to lookup
-   */
-    async function fetchAllUsersArticlesById(articleIds){
-      // build up an array network requests
-      const idsToQuery =  articleIds.map(obj =>{
-        return fetchArticleById(obj)
-    })
-    
-    // repsonse of all networks requests 
-    const batchResp =  await Promise.all(idsToQuery)
 
-    // Cleanup of batch response to return an array or dev.to article objs
-    const allArticlesByID = batchResp.map(resp => resp.data)
+    /**
+     * 
+     * @param {array} articleIds - an array of dev.to article ids to lookup
+     */
+    async function fetchAllUsersArticlesById(articleIds) {
+      // Batch up an array network requests
+      const idsToQuery = articleIds.map(obj => fetchArticleById(obj))
 
-    return allArticlesByID
+      // Invoke batched networks requests.
+      const batchResp = await Promise.all(idsToQuery)
 
+      // Clean response from the batched network request. 
+      // Only return an array of dev.to article objects.
+      return batchResp.map(resp => resp.data)
     }
+
 
     api.loadSource(async ({ addCollection }) => {
 
-      const allArticles = await fetchAllArticles()
+      // Invoke retrieval of all published articles from your dev.to account
+      const allUserArticles = await fetchAllUserArticles()
 
-      // contruct an array of article ids [123, 432, 123]
-      const allArticleIds = allArticles.map(obj => obj.id)
+      // Build an array of only the article ids. e.g [21323, 12312, 12321]
+      const allArticleIds = allUserArticles.map(obj => obj.id)
 
+      // Invoke retreival of dev.to articels by Ids
       const allArticlesByID = await fetchAllUsersArticlesById(allArticleIds)
 
-      const merge = (obj1, obj2) => ({...obj1, ...obj2});
-
-      const mergedArticles =  _.zipWith(allArticlesByID, allArticles, merge)
-
-
-      // parse markdown
-      // for (const article of allArticles) {
-        
-      // }
+      // Now we can merge both the array of dev.to article objects together.
+      // Credits for logic on merge an array of objects together: https://stackoverflow.com/a/53517790/7207193
+      const merge = (obj1, obj2) => ({ ...obj1, ...obj2 });
+      const mergedArticles = _.zipWith(allArticlesByID, allUserArticles, merge)
 
       const collection = addCollection({
         typeName: options.typeName
