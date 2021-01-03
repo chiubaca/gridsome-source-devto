@@ -1,11 +1,6 @@
 const axios = require('axios')
-var _ = require('lodash');
+const _ = require('lodash');
 class DevtoSource {
-  // Default options for the plugin
-  static defaultOptions() {
-    return {
-    }
-  }
 
   constructor(api, options) {
     console.log("user options", options)
