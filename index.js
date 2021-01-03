@@ -20,7 +20,7 @@ class DevtoSource {
      * Sleep utility
      * @param {number} ms 
      */
-    function sleep (ms) {
+    function sleep(ms) {
       new Promise((resolve) => setTimeout(resolve, ms));
     }
 
@@ -29,8 +29,8 @@ class DevtoSource {
      * https://docs.dev.to/api/index.html#operation/getUserPublishedArticles
      * @param {number} page - Pagination page
      */
-    async function fetchArticles(page){
-       const articles =  await axios.get(
+    async function fetchArticles(page) {
+      const articles = await axios.get(
         `https://dev.to/api/articles/me/published?page=${page}&per_page=${ARTICLES_PER_PAGE}`,
         {
           headers: { 'api-key': options.devtoToken },
@@ -47,10 +47,10 @@ class DevtoSource {
      * @param {number} page - pagination of dev.to getUserPublishedArticles endpoint.
      * @param {array} results - starts as empty array. We concat the results for the next run.
      */
-    async function fetchAllArticles(page = 1, results = []){
+    async function fetchAllArticles(page = 1, results = []) {
 
       const resp = await fetchArticles(page)
-      
+
       if (resp.status !== 200) {
         return Promise.reject(resp.statusText)
       }
@@ -60,14 +60,14 @@ class DevtoSource {
         await sleep(100)
         // increment the page and fetch all articles again, whilst appending the results to the next call.
         return fetchAllArticles(page + 1, results.concat(resp.data))
-      } 
+      }
       return results.concat(resp.data);
     }
 
     api.loadSource(async ({ addCollection }) => {
 
       const allArticles = await fetchAllArticles()
-       
+
       console.log("Got Articels!", allArticles.length)
 
       const collection = addCollection({
