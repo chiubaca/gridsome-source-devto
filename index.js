@@ -13,7 +13,7 @@ class DevtoSource {
 
     /**
      * Sleep utility
-     * @param {number} ms 
+     * @param {number} ms - how long to pause execution for in milliseconds
      */
     function sleep(ms) {
       new Promise((resolve) => setTimeout(resolve, ms));
@@ -40,7 +40,8 @@ class DevtoSource {
      * Credits to - https://github.com/cevr/me/blob/5bcc358fe1d892b1d0936429eb832d62a686bc2d/src/lib/posts.ts#L104
      * 
      * @param {number} page - pagination of dev.to getUserPublishedArticles endpoint.
-     * @param {array} results - starts as empty array. We concat the results for the next run.
+     * @param {array} results - array to store results from API call. 
+     *                          We concat the results of the current cyccle for the next run.
      */
     async function fetchAllUserArticles(page = 1, results = []) {
       const resp = await fetchArticles(page)
@@ -114,15 +115,35 @@ class DevtoSource {
 
       for (const article of mergedArticles) {
         collection.addNode({
+          type_of: article.type_of,
           id: article.id,
           title: article.title,
           description: article.description,
+          published: article.published,
+          readable_publish_date: article.readable_publish_date,
           published_at: article.published_at,
           slug: article.slug,
+          path: article.path,
           url: article.url,
-          body_markdown: article.body_markdown,
+          comments_count: article.comments_count,
+          public_reactions_count: article.public_reactions_count,
+          page_views_count: article.page_views_count,
+          collection_id: article.collection_id,
+          published_timestamp: article.published_timestamp,
+          positive_reactions_count: article.positive_reactions_count,
+          cover_image:article.cover_image,
+          social_image:article.social_image,
+          canonical_url: article.canonical_url,
+          created_at: article.created_at,
+          edited_at: article.edited_at,
+          crossposted_at: article.crossposted_at,
+          published_at: article.published_at,
+          last_comment_at: article.last_comment_at,
+          tag_list: article.tag_list,
+          tags: article.tags,
           body_html: article.body_html,
-          tags: article.tag_list,
+          body_markdown: article.body_markdown,
+          user: article.user
           // Computed properties
         })
       }
