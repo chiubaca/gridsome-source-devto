@@ -3,8 +3,6 @@ const _ = require('lodash');
 class DevtoSource {
 
   constructor(api, options) {
-    console.log("user options", options)
-
     /**
      * Number of articles that should be retrieved from dev.to endpoint at one time.
      * the maximum is 1000.
@@ -28,7 +26,7 @@ class DevtoSource {
       const articles = await axios.get(
         `https://dev.to/api/articles/me/published?page=${page}&per_page=${ARTICLES_PER_PAGE}`,
         {
-          headers: { 'api-key': options.devtoToken },
+          headers: { 'api-key': options.devtoAPIKey },
         }
       )
       return articles
