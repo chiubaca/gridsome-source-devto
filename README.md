@@ -7,9 +7,8 @@ This is a source plugin for [DEV.to](https://dev.to/). It retrieves all your pub
 This plugin merges and exposes the entire schema for both the [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles) and [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById) so you can benifit from both data sources easily. This is useful becasue for example `page_views_count` is available on [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles) but not on [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById). On the flip-side `body_html` is available on [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById) but not on [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles). I dont know why DEV.to have implemented their API like this, but with this plugin you dont need to worry about it.
 
 ## Install
-- `yarn add @gridsome/source-contentful`
-- `npm install @gridsome/source-contentful`
-
+- `yarn add @chiubaca/gridsome-source-devto`
+- `npm install @chiubaca/gridsome-source-devto`
 
 ## Example Usage
 
