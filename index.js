@@ -1,5 +1,6 @@
 const axios = require('axios')
 const _ = require('lodash');
+const { parseMarkdown } = require('./utils')
 class DevtoSource {
 
   constructor(api, options) {
@@ -112,6 +113,7 @@ class DevtoSource {
       })
 
       for (const article of mergedArticles) {
+
         collection.addNode({
           type_of: article.type_of,
           id: article.id,
@@ -141,8 +143,11 @@ class DevtoSource {
           tags: article.tags,
           body_html: article.body_html,
           body_markdown: article.body_markdown,
-          user: article.user
+          user: article.user,
+
           // Computed properties
+          parsed_markdown: parseMarkdown(article.body_markdown)
+
         })
       }
 
