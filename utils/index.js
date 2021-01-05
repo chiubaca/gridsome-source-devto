@@ -8,6 +8,7 @@ exports.parseMarkdown =  function parseMarkdown(markdown) {
     require('unified')()
         .use(require('remark-parse'))
         .use(require('remark-slug'))
+        .use(require('remark-autolink-headings'))
         .use(require('remark-prism'), {
             /* options */
         })
