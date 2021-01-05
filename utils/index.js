@@ -7,6 +7,7 @@ exports.parseMarkdown =  function parseMarkdown(markdown) {
     let parsedMD;
     require('unified')()
         .use(require('remark-parse'))
+        .use(require('remark-slug'))
         .use(require('remark-prism'), {
             /* options */
         })
