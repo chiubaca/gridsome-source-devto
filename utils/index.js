@@ -1,8 +1,14 @@
+const matter = require('gray-matter');
+
 /**
  * 
  * @param {string} markdown - markdown text to be parsed
  */
 exports.parseMarkdown =  function parseMarkdown(markdown) {
+
+    // split apart any front matter from the markdown content
+    // TODO: Do something with the front matter
+    const {content, frontmatter} = matter(markdown);
 
     let parsedMD;
     require('unified')()
@@ -22,6 +28,6 @@ exports.parseMarkdown =  function parseMarkdown(markdown) {
         .use(require('rehype-format'))
         // stringifies the hast outputted by rehype - https://github.com/rehypejs/rehype/tree/main/packages/rehype-stringify
         .use(require('rehype-stringify'))
-        .process(markdown, (err, file) => parsedMD = String(file));
+        .process(content, (err, file) => parsedMD = String(file));
         return parsedMD;
 }
