@@ -1,6 +1,6 @@
 const axios = require('axios')
 const _ = require('lodash');
-const { parseMarkdown } = require('./utils')
+const { parseMarkdown, estimateTimeToRead } = require('./utils')
 class DevtoSource {
 
   constructor(api, options) {
@@ -146,8 +146,8 @@ class DevtoSource {
           user: article.user,
 
           // Computed properties
-          parsed_markdown: parseMarkdown(article.body_markdown)
-
+          parsed_markdown: parseMarkdown(article.body_markdown),
+          time_to_read: estimateTimeToRead(article.body_markdown)
         })
       }
 
