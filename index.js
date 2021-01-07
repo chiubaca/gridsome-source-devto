@@ -40,7 +40,7 @@ class DevtoSource {
      * 
      * @param {number} page - pagination of dev.to getUserPublishedArticles endpoint.
      * @param {array} results - array to store results from API call. 
-     *                          We concat the results of the current cyccle for the next run.
+     *                          We concat the results of the current cycle for the next run.
      */
     async function fetchAllUserArticles(page = 1, results = []) {
       const resp = await fetchArticles(page)
@@ -102,7 +102,7 @@ class DevtoSource {
       // Build an array of only the article ids. e.g [21323, 12312, 12321]
       const allArticleIds = allUserArticles.map(obj => obj.id)
 
-      // Invoke retreival of dev.to articels by Ids
+      // Invoke retrieval of dev.to articles by Ids
       const allArticlesByID = await fetchAllUsersArticlesById(allArticleIds)
 
       // Now we can merge both the array of dev.to article objects together.
