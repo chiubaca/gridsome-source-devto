@@ -103,7 +103,7 @@ module.exports = {
 
 You can render the each individual article in the `DevToArticles.vue` file.
 
-```vue
+```html
 <template>
   <Layout>
     <article v-html="$page.posts.parsed_markdown" ></article>
@@ -113,12 +113,25 @@ You can render the each individual article in the `DevToArticles.vue` file.
 <page-query>
   query DevToArticles ($path: String!) {
     posts: DevToArticles (path: $path) {
+      title
       parsed_markdown
     }
   }
 </page-query>
-```
 
+<script>
+import '@/prism_themes/prism-tomorrow.css';
+export default {
+  metaInfo() {
+    return {
+      title: this.$page.blogs.title
+    };
+  }
+};
+</script>
+
+```
+> To stylise your code blocks. You can download different stylesheets compatible with prism.js [here](https://prismjs.com/index.html).
 ### Options
 
 `typeName` - String (Required)
