@@ -101,9 +101,40 @@ module.exports = {
 }
 ```
 
+### All Articles
+You may want to render a list of all article titles like this
+
+```html
+<!-- src/pages/Index.vue -->
+<template>
+  <Layout>
+    <h1>All Articles</h1>
+    <div v-for="(post, index) in $page.posts.edges" :key="index">
+      <g-link :to="post.node.path">{{ post.node.title }}</g-link>
+    </div>
+  </Layout>
+</template>
+
+<page-query>
+  query{
+    posts: allDevToArticles{
+      edges {
+        node{
+          title
+          path
+        }
+      }
+    }
+  }
+</page-query>
+
+```
+
+### Single Articles
 You can render the each individual article in the `DevToArticles.vue` file.
 
 ```html
+<!-- src/templates/DevToArticles.vue -->
 <template>
   <Layout>
     <article v-html="$page.posts.parsed_markdown" ></article>
