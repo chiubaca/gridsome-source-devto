@@ -68,6 +68,8 @@ class DevtoSource {
      */
     async function fetchArticleById(id) {
       // small pause is required so we don't hit 429 error "Too many requests" issue.
+       // TODO I dont think this method to throttle is actually doing anything...
+      // need to find a better way to handle 429 requests.
       await sleep(100)
       const articles = await axios.get(
         `https://dev.to/api/articles/${id}`,
