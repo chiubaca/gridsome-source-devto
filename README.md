@@ -1,10 +1,81 @@
-# Dev.to source for Gridsome
+# DEV.to source plugin for Gridsome
 
 >  This package is under development and API might change before v1 is released.
 
-This is a source plugin for [DEV.to](https://dev.to/). It retrieves all your published articles via the [DEV API (beta)](https://docs.dev.to/api/).
+This is a Gridsome source plugin for [DEV.to](https://docs.dev.to/api/). It retrieves all your published articles via the [DEV API (beta)](https://docs.dev.to/api/).
 
-This plugin merges and exposes the entire schema for both the [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles) and [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById) so you can benifit from both data sources easily. This is useful becasue for example `page_views_count` is available on [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles) but not on [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById). On the flip-side `body_html` is available on [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById) but not on [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles). I dont know why DEV.to have implemented their API like this, but with this plugin you dont need to worry about it.
+This plugin merges and exposes the entire schema for both the [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles) and [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById) so you can benefit from both endpoints effortlessly. This is useful because for example; `page_views_count` is available on [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles) but not on [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById). On the flip-side `body_html` is available on [`getArticleById`](https://docs.dev.to/api/index.html#operation/getArticleById) but not on [`getArticles`](https://docs.dev.to/api/index.html#operation/getArticles). Not sure why DEV.to implemented their API like this, but with this plugin, you don't need to worry about it.
+
+## Available DEV.to attributes
+<details>
+  <summary>The combined dev.to schemas provides the following attributes:</summary>
+  
+  * `type_of`
+  
+  * `id`
+  
+  * `title`
+  
+  * `description`
+  
+  * `published`
+  
+  * `readable_publish_date`
+  
+  * `published_at`
+  
+  * `slug`
+  
+  * `url`
+  
+  * `comments_count`
+  
+  * `public_reactions_count`
+  
+  * `page_views_count`
+  
+  * `collection_id`
+  
+  * `published_timestamp`
+  
+  * `positive_reactions_count`
+  
+  * `social_image`
+  
+  * `canonical_url`
+  
+  * `created_at`
+  
+  * `edited_at`
+  
+  * `crossposted_at`
+  
+  * `published_at`
+  
+  * `last_comment_at`
+  
+  * `tag_list`
+  
+  * `tags`
+  
+  * `body_html`
+  
+  * `body_markdown`
+  
+  * `user`
+</details>
+
+
+## Computed attributes
+<details>
+  <summary>In addition, this plugin provides some handy computed attributes too: </summary>
+
+  * `parsed_markdown`: Similar to `body_html`. However the parsed markdown has been processed to provide some additional extras such syntax highlighting by prism.js and github style auto links. Note: shortcodes are not parsed.
+     
+  
+  * `time_to_read`: Estimated time to read an article based on [200 word per minute](https://irisreading.com/the-average-reading-speed/).
+  
+</details>
 
 ## Install
 - `yarn add @chiubaca/gridsome-source-devto`
@@ -23,15 +94,36 @@ module.exports = {
         devtoAPIKey: process.env.DEVTO_KEY
       }
     }
-  ]
+  ],
+  templates: {
+    DevToArticles: '/:title'
+  }
 }
+```
+
+You can render the each individual article in the `DevToArticles.vue` file.
+
+```vue
+<template>
+  <Layout>
+    <article v-html="$page.posts.parsed_markdown" ></article>
+  </Layout>
+</template>
+
+<page-query>
+  query DevToArticles ($path: String!) {
+    posts: DevToArticles (path: $path) {
+      parsed_markdown
+    }
+  }
+</page-query>
 ```
 
 ### Options
 
 `typeName` - String (Required)
 
-The prefix to be used for your imported schema's field types.
+The prefix to be used for your imported schemas field types.
 
 `devtoAPIKey`- String (Required)
 
