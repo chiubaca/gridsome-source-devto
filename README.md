@@ -100,8 +100,32 @@ module.exports = {
   }
 }
 ```
+### Options
 
-### All Articles
+`typeName` - String (Required)
+
+The prefix to be used for your imported schemas field types.
+
+`devtoAPIKey`- String (Required)
+
+Get your Dev.to API key by following this instructions [https://docs.dev.to/api/index.html#section/Authentication/api_key]().
+It is best to store your key in a `.env` file rather than exposing it inline in your `gridsome.config.js` files so that your key is not exposed publicly.
+
+
+### Custom Routes
+
+To add custom routes use the [`templates`](https://gridsome.org/docs/templates/) config with the collection type name as the key and the custom route as the value.
+
+```js
+// gridsome.config.js
+module.exports = {
+ templates: {
+    DevToPosts: '/:title'
+  }
+}
+```
+
+### Display All Articles
 You may want to render a list of all article titles like this
 
 ```html
@@ -130,7 +154,7 @@ You may want to render a list of all article titles like this
 
 ```
 
-### Single Articles
+### Display A Single Article
 You can render the each individual article in the `DevToArticles.vue` file.
 
 ```html
@@ -163,28 +187,4 @@ export default {
 
 ```
 > To stylise your code blocks. You can download different stylesheets compatible with prism.js [here](https://prismjs.com/index.html).
-### Options
-
-`typeName` - String (Required)
-
-The prefix to be used for your imported schemas field types.
-
-`devtoAPIKey`- String (Required)
-
-Get your Dev.to API key by following this instructions [https://docs.dev.to/api/index.html#section/Authentication/api_key]().
-It is best to store your key in a `.env` file rather than exposing it inline in your `gridsome.config.js` files so that your key is not exposed publicly.
-
-
-### Custom Routes
-
-To add custom routes use the [`templates`](https://gridsome.org/docs/templates/) config with the collection type name as the key and the custom route as the value.
-
-```js
-// gridsome.config.js
-module.exports = {
- templates: {
-    DevToPosts: '/:title'
-  }
-}
-```
 
