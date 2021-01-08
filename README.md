@@ -167,7 +167,7 @@ You can render the each individual article in the `DevToArticles.vue` file.
 
 <page-query>
   query DevToArticles ($path: String!) {
-    posts: DevToArticles (path: $path) {
+    posts: devToArticles (path: $path) {
       title
       parsed_markdown
     }
