@@ -27,7 +27,10 @@ class DevtoSource {
       const articles = await axios.get(
         `https://dev.to/api/articles/me/published?page=${page}&per_page=${ARTICLES_PER_PAGE}`,
         {
-          headers: { 'api-key': options.devtoAPIKey },
+          headers: { 
+            'api-key': options.devtoAPIKey, 
+            'accept': 'application/vnd.forem.api-v1+json' 
+          },
         }
       )
       return articles
