@@ -1,5 +1,5 @@
 const axios = require('axios')
-const _ = require('lodash');
+const { zipWith } = require('lodash');
 const { parseMarkdown, estimateTimeToRead } = require('./utils')
 class DevtoSource {
 
@@ -11,17 +11,10 @@ class DevtoSource {
     const ARTICLES_PER_PAGE = 100;
 
     /**
-     * Sleep utility
-     * @param {number} ms - how long to pause execution for in milliseconds
-     */
-    function sleep(ms) {
-      new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
-    /**
      * API call to /articles/me/published endpoint
      * https://docs.dev.to/api/index.html#operation/getUserPublishedArticles
      * @param {number} page - Pagination page
+     * @returns {Array<{}>}
      */
     async function fetchArticles(page) {
       const articles = await axios.get(
@@ -51,9 +44,6 @@ class DevtoSource {
 
       if (resp.data.length === ARTICLES_PER_PAGE) {
 
-        // small pause is required so we don't hit 429 error "Too many requests" issue.
-        await sleep(100)
-
         // increment the page and fetch all articles again, whilst appending the results to the next call.
         return fetchAllUserArticles(page + 1, results.concat(resp.data))
       }
@@ -67,10 +57,6 @@ class DevtoSource {
      * @param {number} id - dev.to article ID 
      */
     async function fetchArticleById(id) {
-      // small pause is required so we don't hit 429 error "Too many requests" issue.
-       // TODO I dont think this method to throttle is actually doing anything...
-      // need to find a better way to handle 429 requests.
-      await sleep(100)
       const articles = await axios.get(
         `https://dev.to/api/articles/${id}`,
       )
@@ -78,19 +64,19 @@ class DevtoSource {
     }
 
     /**
-     * 
      * @param {array} articleIds - an array of dev.to article ids to lookup
      */
     async function fetchAllUsersArticlesById(articleIds) {
-      // Batch up an array network requests
-      const idsToQuery = articleIds.map(obj => fetchArticleById(obj))
+      const allArticles = []
 
-      // Invoke batched networks requests.
-      const batchResp = await Promise.all(idsToQuery)
+      const batchRequestArticleById = articleIds.map(async id => fetchArticleById(id))
 
-      // Clean response from the batched network request. 
-      // Only return an array of dev.to article objects.
-      return batchResp.map(resp => resp.data)
+      for (const request of batchRequestArticleById) {
+        const result = await request
+        allArticles.push(result.data)
+      }
+
+      return allArticles
     }
 
 
@@ -104,11 +90,10 @@ class DevtoSource {
 
       // Invoke retrieval of dev.to articles by Ids
       const allArticlesByID = await fetchAllUsersArticlesById(allArticleIds)
-
       // Now we can merge both the array of dev.to article objects together.
       // Credits for logic on merge an array of objects together: https://stackoverflow.com/a/53517790/7207193
       const merge = (obj1, obj2) => ({ ...obj1, ...obj2 });
-      const mergedArticles = _.zipWith(allArticlesByID, allUserArticles, merge)
+      const mergedArticles = zipWith(allArticlesByID, allUserArticles, merge)
 
       const collection = addCollection({
         typeName: options.typeName
@@ -133,8 +118,8 @@ class DevtoSource {
           collection_id: article.collection_id,
           published_timestamp: article.published_timestamp,
           positive_reactions_count: article.positive_reactions_count,
-          cover_image:article.cover_image,
-          social_image:article.social_image,
+          cover_image: article.cover_image,
+          social_image: article.social_image,
           canonical_url: article.canonical_url,
           created_at: article.created_at,
           edited_at: article.edited_at,
